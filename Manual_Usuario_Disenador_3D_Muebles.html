@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Manual de Usuario — Diseñador 3D de Muebles</title>
+<style>
+:root{--brand:#005098;--info:#E5F1FB;--soft:#F5F6F7;--text:#2E4052;--muted:#889DB8;--danger:#EB5160;--border:#D9E2EA;}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);background:#fff;line-height:1.65}
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.header-inner{max-width:1480px;margin:auto;display:flex;align-items:center;gap:18px;padding:14px 22px}
+.brand{font-weight:800;color:var(--brand);font-size:18px;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;background:var(--info);color:var(--brand);padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;margin-left:8px}
+.search{flex:1;max-width:560px} .search input{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:14px;outline:none}
+.search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--info)}
+.layout{max-width:1480px;margin:auto;display:grid;grid-template-columns:290px minmax(0,1fr);gap:36px;padding:28px 22px 70px}
+aside{position:sticky;top:84px;align-self:start;height:calc(100vh - 104px);overflow:auto;border-right:1px solid var(--border);padding-right:18px}
+aside h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 12px}
+#toc a{display:block;color:var(--text);text-decoration:none;font-size:13px;padding:5px 8px;border-radius:6px;margin:1px 0}
+#toc a:hover{background:var(--info);color:var(--brand)}
+main{max-width:920px;min-width:0} main h1{font-size:40px;line-height:1.15;color:var(--brand);margin-top:8px}
+main h2{font-size:26px;margin-top:46px;padding-top:10px;border-top:1px solid var(--border)} main h3{font-size:19px;margin-top:28px}
+main p,main li{font-size:15.5px} main blockquote{margin:20px 0;padding:14px 18px;background:var(--info);border-left:4px solid var(--brand);border-radius:8px}
+main code{background:var(--soft);padding:2px 5px;border-radius:5px;font-family:Consolas,monospace} main pre{overflow:auto;background:#18212a;color:#f5f7fa;padding:16px;border-radius:10px}
+main pre code{background:transparent;padding:0;color:inherit} table{width:100%;border-collapse:collapse;margin:18px 0} th,td{border:1px solid var(--border);padding:9px 10px;text-align:left} th{background:var(--soft)}
+footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--border);color:var(--muted);font-size:13px}
+mark{background:#fff2a8} .hidden-by-search{display:none!important}
+@media(max-width:900px){.layout{grid-template-columns:1fr;padding:18px} aside{display:none} .header-inner{padding:12px 14px} .brand{font-size:15px} main h1{font-size:32px}}
+@media print{header,aside{display:none} .layout{display:block;max-width:none;padding:0} main{max-width:none} a{color:inherit;text-decoration:none}}
+</style>
+</head>
+<body>
+<header><div class="header-inner"><div class="brand">Diseñador 3D de Muebles <span class="badge">Manual v1.0</span></div><div class="search"><input id="search" placeholder="Buscar en el manual…" aria-label="Buscar en el manual"></div></div></header>
+<div class="layout"><aside><h3>Contenido</h3><nav id="toc"></nav></aside><main id="content"><h1>Diseñador 3D de Muebles</h1>
+<h2>Manual de usuario</h2>
+<p><strong>Versión del documento:</strong> 1.0 borrador<br />
+<strong>Objetivo:</strong> explicar de forma práctica cómo diseñar, preparar y documentar un mueble dentro del sistema.</p>
+<blockquote>
+<p><strong>Nota:</strong> este manual está construido con base en las funciones definidas y desarrolladas durante las fases del proyecto. Algunos nombres de botones o detalles visuales pueden variar ligeramente según la versión actual del código.</p>
+</blockquote>
+<hr />
+<h1>1. Introducción</h1>
+<p>El Diseñador 3D de Muebles está pensado para crear muebles de manera visual, sencilla y orientada a fabricación.</p>
+<p>La filosofía del sistema es:</p>
+<blockquote>
+<p><strong>Construir como LEGO, no trabajar como CAD.</strong></p>
+</blockquote>
+<p>El usuario trabaja con piezas reales de carpintería —tablas, listones, MDF, triplay y otros tableros— y las coloca, mueve, gira, corta y une dentro de un espacio 3D.</p>
+<p>El sistema conserva las medidas reales en milímetros, pero representa las piezas con una escala visual adecuada para trabajar cómodamente en pantalla.</p>
+<p>Además del diseño, el sistema puede preparar información de fabricación:</p>
+<ul>
+<li>piezas necesarias;</li>
+<li>materiales originales;</li>
+<li>sobrantes;</li>
+<li>planes de corte;</li>
+<li>optimización de material;</li>
+<li>perforaciones;</li>
+<li>uniones;</li>
+<li>reporte para taller o aserradero.</li>
+</ul>
+<hr />
+<h1>2. Flujo general de trabajo</h1>
+<p>El flujo recomendado es:</p>
+<ol>
+<li>Crear o abrir un proyecto.</li>
+<li>Agregar piezas desde el catálogo o desde una plantilla.</li>
+<li>Construir el mueble en la vista <strong>Diseño</strong>.</li>
+<li>Ajustar posiciones, giros y Snap.</li>
+<li>Realizar cortes.</li>
+<li>Agregar perforaciones, cortes especiales o uniones cuando sea necesario.</li>
+<li>Revisar materiales y sobrantes.</li>
+<li>Entrar a <strong>Fabricación</strong>.</li>
+<li>Revisar u optimizar el plan de corte.</li>
+<li>Generar el reporte para taller/aserradero.</li>
+<li>Guardar el proyecto para continuar después.</li>
+</ol>
+<hr />
+<h1>3. Interfaz principal</h1>
+<h2>3.1 Área de trabajo 3D</h2>
+<p>Es la zona central donde se construye el mueble.</p>
+<p>Aquí se pueden:</p>
+<ul>
+<li>seleccionar piezas;</li>
+<li>mover;</li>
+<li>girar;</li>
+<li>hacer Snap;</li>
+<li>cortar;</li>
+<li>medir;</li>
+<li>crear perforaciones;</li>
+<li>crear uniones;</li>
+<li>revisar cotas.</li>
+</ul>
+<p>La cámara puede girar alrededor del proyecto para trabajar desde cualquier ángulo.</p>
+<h2>3.2 Catálogo</h2>
+<p>El catálogo contiene piezas y materiales disponibles para agregar al proyecto.</p>
+<p>Puede incluir categorías como:</p>
+<ul>
+<li>tablas;</li>
+<li>listones;</li>
+<li>MDF;</li>
+<li>triplay;</li>
+<li>melamina;</li>
+<li>OSB;</li>
+<li>aglomerado;</li>
+<li>plantillas de muebles.</li>
+</ul>
+<p>El catálogo debe mantenerse organizado mediante categorías, filtros o búsqueda para evitar saturar la interfaz.</p>
+<h2>3.3 Paneles de propiedades</h2>
+<p>Los paneles muestran información y opciones relacionadas con la pieza seleccionada.</p>
+<p>Entre ellas pueden aparecer:</p>
+<ul>
+<li>dimensiones;</li>
+<li>posición;</li>
+<li>rotación;</li>
+<li>material;</li>
+<li>estado;</li>
+<li>operaciones;</li>
+<li>uniones;</li>
+<li>datos de fabricación.</li>
+</ul>
+<h2>3.4 Diseño y Fabricación</h2>
+<p>El sistema separa dos contextos principales.</p>
+<h3>Diseño</h3>
+<p>Se utiliza para construir el mueble y trabajar directamente con sus piezas.</p>
+<h3>Fabricación</h3>
+<p>Se utiliza para revisar:</p>
+<ul>
+<li>lista de piezas;</li>
+<li>materiales;</li>
+<li>sobrantes;</li>
+<li>plan de cortes;</li>
+<li>optimización;</li>
+<li>reporte de fabricación.</li>
+</ul>
+<p>Esta separación mantiene limpia la experiencia del editor 3D.</p>
+<hr />
+<h1>4. Crear, abrir y guardar proyectos</h1>
+<h2>4.1 Proyecto nuevo</h2>
+<p>Utiliza <strong>Nuevo</strong> para comenzar desde cero.</p>
+<p>Antes de reemplazar un proyecto existente, guarda el trabajo si deseas conservarlo.</p>
+<h2>4.2 Guardar proyecto</h2>
+<p>El sistema puede guardar el proyecto en un archivo propio, por ejemplo:</p>
+<p><code>MiMesa.crj</code></p>
+<p>Internamente puede estar basado en JSON, pero para el usuario funciona como un archivo normal de proyecto.</p>
+<p>El archivo debe conservar, entre otros datos:</p>
+<ul>
+<li>piezas;</li>
+<li>dimensiones;</li>
+<li>posiciones;</li>
+<li>rotaciones;</li>
+<li>materiales;</li>
+<li>cortes;</li>
+<li>sobrantes;</li>
+<li>perforaciones;</li>
+<li>uniones;</li>
+<li>configuración;</li>
+<li>información de fabricación.</li>
+</ul>
+<h2>4.3 Abrir proyecto</h2>
+<p>Utiliza <strong>Abrir</strong> y selecciona un archivo de proyecto compatible.</p>
+<p>El sistema reconstruye el estado guardado para poder continuar trabajando.</p>
+<h2>4.4 Guardado local</h2>
+<p>Además del archivo manual, algunas versiones pueden conservar automáticamente el estado en almacenamiento local del navegador.</p>
+<p>El archivo de proyecto es recomendable cuando:</p>
+<ul>
+<li>se desea respaldar el trabajo;</li>
+<li>se quiere continuar en otro equipo;</li>
+<li>se desea conservar diferentes versiones del mismo mueble.</li>
+</ul>
+<hr />
+<h1>5. Agregar piezas y materiales</h1>
+<h2>5.1 Desde el catálogo</h2>
+<p>Selecciona una pieza o arrástrala desde el catálogo hacia el área 3D.</p>
+<p>La pieza se agrega utilizando sus dimensiones reales y su material asociado.</p>
+<h2>5.2 Tipos de material</h2>
+<h3>Tablas</h3>
+<p>Piezas largas de madera dimensional.</p>
+<p>Ejemplo: <code>3000 × 100 × 18 mm</code></p>
+<h3>Listones</h3>
+<p>Piezas estrechas, normalmente usadas para estructuras, bastidores o refuerzos.</p>
+<h3>MDF / Triplay / Melamina / OSB / Aglomerado</h3>
+<p>Materiales tipo hoja o tablero.</p>
+<p>Ejemplo: <code>2440 × 1220 × 18 mm</code></p>
+<h2>5.3 Dimensiones configurables</h2>
+<p>Las medidas del catálogo funcionan como punto de partida. Cuando la interfaz lo permita, pueden ajustarse para representar el material real que se utilizará.</p>
+<hr />
+<h1>6. Plantillas</h1>
+<p>Las plantillas permiten comenzar rápidamente con estructuras comunes sin convertir el sistema en un catálogo rígido de muebles prefabricados.</p>
+<p>Pueden existir plantillas como:</p>
+<ul>
+<li>caja cerrada;</li>
+<li>caja abierta;</li>
+<li>repisa;</li>
+<li>estantería;</li>
+<li>mesa;</li>
+<li>banco;</li>
+<li>cajonera;</li>
+<li>escalera;</li>
+<li>marco.</li>
+</ul>
+<h2>6.1 Crear desde plantilla</h2>
+<p>Una plantilla solicita únicamente los parámetros necesarios.</p>
+<p>Ejemplo para una mesa:</p>
+<ul>
+<li>ancho;</li>
+<li>fondo;</li>
+<li>alto;</li>
+<li>material.</li>
+</ul>
+<p>Después genera piezas normales del sistema. Estas piezas pueden moverse, cortarse, eliminarse, modificarse y unirse como cualquier otra.</p>
+<p>La plantilla acelera el inicio, pero no bloquea el diseño.</p>
+<hr />
+<h1>7. Seleccionar, mover y organizar piezas</h1>
+<h2>7.1 Seleccionar</h2>
+<p>Haz clic sobre una pieza para seleccionarla.</p>
+<p>La selección puede mostrar:</p>
+<ul>
+<li>resaltado;</li>
+<li>dimensiones;</li>
+<li>controles de movimiento;</li>
+<li>controles de rotación;</li>
+<li>información en el panel de propiedades.</li>
+</ul>
+<h2>7.2 Selección múltiple</h2>
+<p>Cuando esté disponible, utiliza <strong>Shift + clic</strong> para añadir o retirar piezas de una selección múltiple.</p>
+<p>Esto permite mover varias piezas al mismo tiempo.</p>
+<h2>7.3 Agrupar temporalmente</h2>
+<p>Las piezas seleccionadas pueden agruparse temporalmente para facilitar el movimiento de un conjunto.</p>
+<p>El agrupamiento no debe convertirlas en una sola pieza física; únicamente facilita su manipulación.</p>
+<h2>7.4 Movimiento libre</h2>
+<p>Arrastra la pieza hacia la posición deseada sobre los ejes X, Y y Z.</p>
+<h2>7.5 Ajuste fino</h2>
+<p>Cuando esté disponible:</p>
+<ul>
+<li><strong>Flechas:</strong> movimiento pequeño.</li>
+<li><strong>Shift + Flechas:</strong> movimiento mayor.</li>
+</ul>
+<p>Esta función resulta útil cuando una pieza ya está prácticamente colocada.</p>
+<hr />
+<h1>8. Girar piezas</h1>
+<p>Las piezas pueden rotarse para adoptar la orientación necesaria.</p>
+<p>El sistema puede sugerir ángulos comunes:</p>
+<ul>
+<li>0°;</li>
+<li>15°;</li>
+<li>30°;</li>
+<li>45°;</li>
+<li>60°;</li>
+<li>90°.</li>
+</ul>
+<p>La rotación sigue permitiendo valores libres cuando es necesario.</p>
+<h2>8.1 Snap angular</h2>
+<p>Al acercarse a un ángulo común puede aparecer una guía visual y una ligera atracción magnética.</p>
+<p>El objetivo es facilitar ángulos frecuentes sin bloquear la libertad del usuario.</p>
+<hr />
+<h1>9. Cámara y vistas</h1>
+<p>La cámara permite observar el proyecto desde diferentes posiciones.</p>
+<p>Puede incluir accesos rápidos como:</p>
+<ul>
+<li>frontal;</li>
+<li>posterior;</li>
+<li>izquierda;</li>
+<li>derecha;</li>
+<li>superior;</li>
+<li>isométrica.</li>
+</ul>
+<h2>9.1 Enfocar una pieza</h2>
+<p>Cuando esté disponible, haz doble clic sobre una pieza para centrar la cámara en ella.</p>
+<h2>9.2 Ajustar todo</h2>
+<p>La opción <strong>Ajustar todo</strong> encuadra el proyecto completo.</p>
+<p>Es útil si el mueble sale del área visible o la cámara queda demasiado cerca.</p>
+<hr />
+<h1>10. Snap entre piezas</h1>
+<p>El Snap ayuda a colocar piezas correctamente sin tener que introducir coordenadas manualmente.</p>
+<h2>10.1 Snap cara a cara</h2>
+<p>Al acercar una cara de una pieza a otra, el sistema detecta candidatos compatibles.</p>
+<p>Antes de completar el Snap puede resaltarse:</p>
+<ul>
+<li>la cara de la pieza móvil;</li>
+<li>la cara destino;</li>
+<li>una guía visual.</li>
+</ul>
+<h2>10.2 Snap desde el punto de agarre</h2>
+<p>El sistema puede considerar desde qué zona se tomó la pieza.</p>
+<p>Esto permite, por ejemplo, tomar una tabla desde un extremo y hacer Snap usando ese extremo en lugar de depender exclusivamente del centro geométrico.</p>
+<h2>10.3 Alineación inteligente</h2>
+<p>Después de detectar las caras, el sistema intenta modificar el menor número posible de coordenadas.</p>
+<p>La idea es:</p>
+<blockquote>
+<p><strong>hacer contacto sin mover innecesariamente la pieza en otros ejes.</strong></p>
+</blockquote>
+<p>Según la versión pueden existir opciones como:</p>
+<ul>
+<li>centro;</li>
+<li>borde inicial;</li>
+<li>borde final;</li>
+<li>libre.</li>
+</ul>
+<h2>10.4 Guías</h2>
+<p>Durante el movimiento pueden aparecer guías para:</p>
+<ul>
+<li>centros;</li>
+<li>bordes;</li>
+<li>misma altura;</li>
+<li>misma profundidad.</li>
+</ul>
+<p>Las guías son temporales y desaparecen al terminar la operación.</p>
+<hr />
+<h1>11. Copiar, duplicar y repetir acciones</h1>
+<h2>11.1 Copiar / duplicar</h2>
+<p>Utiliza <strong>Copiar</strong> o <strong>Duplicar</strong> para crear otra pieza con las mismas características.</p>
+<p>Normalmente se conserva:</p>
+<ul>
+<li>material;</li>
+<li>dimensiones;</li>
+<li>orientación;</li>
+<li>propiedades básicas.</li>
+</ul>
+<p>Después la copia puede moverse de forma independiente.</p>
+<h2>11.2 Repetir última acción</h2>
+<p>La función <strong>Repetir última acción</strong> permite reutilizar una operación reciente sobre otra pieza compatible.</p>
+<p>Puede utilizarse con acciones como:</p>
+<ul>
+<li>duplicar;</li>
+<li>girar;</li>
+<li>mover;</li>
+<li>cortar.</li>
+</ul>
+<p>Ejemplo:</p>
+<ol>
+<li>Girar una pieza 90°.</li>
+<li>Seleccionar otra.</li>
+<li>Ejecutar <strong>Repetir última acción</strong>.</li>
+<li>La segunda pieza recibe el mismo giro.</li>
+</ol>
+<p>Para cortes, el sistema puede recordar dirección, medida y tipo de corte.</p>
+<p>Si la acción no es compatible con la pieza seleccionada, no debe aplicarse de forma incorrecta.</p>
+<hr />
+<h1>12. Bloquear, ocultar y eliminar</h1>
+<h2>12.1 Bloquear</h2>
+<p>Una pieza bloqueada permanece en su posición y evita movimientos accidentales.</p>
+<h2>12.2 Ocultar</h2>
+<p>Permite retirar temporalmente una pieza de la vista sin eliminarla del proyecto.</p>
+<h2>12.3 Eliminar</h2>
+<p>Elimina la pieza del diseño. Cuando corresponda, la acción puede recuperarse mediante <strong>Undo</strong>.</p>
+<hr />
+<h1>13. Undo y Redo</h1>
+<p>El sistema mantiene historial de operaciones importantes.</p>
+<h3>Undo</h3>
+<p>Deshace la última acción.</p>
+<h3>Redo</h3>
+<p>Vuelve a aplicar una acción deshecha.</p>
+<p>El historial debe contemplar operaciones como movimiento, rotación, duplicación, corte y otras operaciones compatibles.</p>
+<hr />
+<h1>14. Cortar piezas</h1>
+<p>La herramienta <strong>Cortar</strong> divide una pieza en dos partes reales dentro del proyecto.</p>
+<p>La interacción principal es visual.</p>
+<h2>14.1 Línea de corte</h2>
+<p>Al activar la herramienta aparece una línea sobre la pieza.</p>
+<p>La línea puede desplazarse con el mouse y mientras se mueve se muestran las medidas resultantes.</p>
+<p>Ejemplo:</p>
+<p><code>720 mm | 2280 mm</code></p>
+<h2>14.2 Medida exacta</h2>
+<p>Aunque el corte sea visual, puede introducirse una medida exacta cuando sea necesario.</p>
+<p>El sistema puede aplicar una ligera ayuda a medidas redondas.</p>
+<h2>14.3 Confirmar o cancelar</h2>
+<p>Acciones habituales:</p>
+<ul>
+<li>Confirmar.</li>
+<li>Cancelar.</li>
+<li><strong>Enter:</strong> confirmar.</li>
+<li><strong>Esc:</strong> cancelar.</li>
+</ul>
+<hr />
+<h1>15. Corte de tablas y listones</h1>
+<p>Las tablas pueden cortarse en más de una dirección.</p>
+<h2>15.1 Corte transversal</h2>
+<p>Divide principalmente la longitud.</p>
+<p>Ejemplo: <code>3000 mm → 720 mm + 2280 mm</code></p>
+<h2>15.2 Corte longitudinal</h2>
+<p>Divide el ancho de la tabla.</p>
+<p>Ejemplo: <code>100 mm → 40 mm + 60 mm</code></p>
+<p>Las piezas resultantes siguen siendo piezas normales del proyecto.</p>
+<hr />
+<h1>16. Corte de MDF y triplay</h1>
+<p>Los tableros pueden cortarse sobre sus dos dimensiones principales.</p>
+<p>Al iniciar el corte se puede elegir o inferir la orientación:</p>
+<ul>
+<li>horizontal;</li>
+<li>vertical.</li>
+</ul>
+<p>La línea atraviesa completamente la pieza.</p>
+<p>Después del corte, ambas partes pueden volver a cortarse.</p>
+<hr />
+<h1>17. Trazabilidad de cortes</h1>
+<p>Cada pieza cortada conserva su relación con el material de origen.</p>
+<p>Ejemplo:</p>
+<pre><code class="language-text">TABLA-001
+├── A1
+└── A2
+    ├── A3
+    └── A4
+</code></pre>
+<p>Esta relación permite saber de qué material original proviene cada pieza.</p>
+<p>La trazabilidad es importante para:</p>
+<ul>
+<li>sobrantes;</li>
+<li>fabricación;</li>
+<li>optimización;</li>
+<li>reportes.</li>
+</ul>
+<hr />
+<h1>18. Colores de piezas cortadas</h1>
+<p>Los materiales originales utilizan colores más fuertes.</p>
+<p>Las piezas resultantes de un corte utilizan una versión más clara del mismo color.</p>
+<p>El objetivo es distinguir visualmente material original y material ya procesado sin que los colores cortados pierdan su identidad.</p>
+<hr />
+<h1>19. Sobrantes</h1>
+<p>Después de un corte, ninguna de las dos partes se considera automáticamente desperdicio.</p>
+<p>Un sobrante puede:</p>
+<ul>
+<li>seleccionarse;</li>
+<li>moverse;</li>
+<li>reutilizarse;</li>
+<li>cortarse de nuevo;</li>
+<li>incorporarse al mueble.</li>
+</ul>
+<p>Esto permite aprovechar material real de forma más eficiente.</p>
+<hr />
+<h1>20. Materiales del proyecto</h1>
+<p>El panel de materiales puede mostrar información como:</p>
+<pre><code class="language-text">TABLA-001
+Pino — 3000 × 100 × 18
+Utilizado: 1170 mm
+Disponible: 1830 mm
+</code></pre>
+<p>Para hojas o tableros puede indicar si están sin cortar, parcialmente utilizados o disponibles como sobrante.</p>
+<hr />
+<h1>21. IDs de piezas</h1>
+<p>Las piezas pueden recibir identificadores legibles, por ejemplo:</p>
+<ul>
+<li>A1;</li>
+<li>A2;</li>
+<li>A3;</li>
+<li>B1;</li>
+<li>B2.</li>
+</ul>
+<p>Estos IDs se utilizan de forma consistente en:</p>
+<ul>
+<li>Diseño;</li>
+<li>Fabricación;</li>
+<li>Plan optimizado;</li>
+<li>Reporte.</li>
+</ul>
+<p>Esto permite identificar físicamente cada pieza en el taller.</p>
+<hr />
+<h1>22. Perforaciones</h1>
+<p>La herramienta <strong>Perforar</strong> agrega una operación de perforación sobre una cara.</p>
+<p>Flujo recomendado:</p>
+<ol>
+<li>Seleccionar la pieza.</li>
+<li>Elegir <strong>Perforar</strong>.</li>
+<li>Hacer clic sobre una cara.</li>
+<li>Colocar visualmente la perforación.</li>
+<li>Definir diámetro.</li>
+<li>Definir profundidad si aplica.</li>
+<li>Confirmar.</li>
+</ol>
+<h2>22.1 Presets</h2>
+<p>Pueden existir medidas rápidas como:</p>
+<ul>
+<li>Ø5;</li>
+<li>Ø8;</li>
+<li>Ø10;</li>
+<li>Ø35;</li>
+<li>personalizado.</li>
+</ul>
+<h2>22.2 Usos típicos</h2>
+<ul>
+<li>pasacables;</li>
+<li>tarugos;</li>
+<li>tornillos;</li>
+<li>bisagras de cazoleta.</li>
+</ul>
+<p>La perforación se conserva como información de fabricación.</p>
+<hr />
+<h1>23. Cortes angulares</h1>
+<p>La herramienta de corte puede admitir corte recto y corte angular.</p>
+<p>Puede ofrecer ángulos frecuentes como 15°, 30°, 45° y 60°, además de valores personalizados.</p>
+<p>Antes de confirmar debe mostrarse una previsualización.</p>
+<hr />
+<h1>24. Curvas simples</h1>
+<p>El sistema puede manejar operaciones sencillas predefinidas como:</p>
+<ul>
+<li>esquina redondeada;</li>
+<li>arco;</li>
+<li>semicírculo;</li>
+<li>círculo/agujero.</li>
+</ul>
+<p>El objetivo es cubrir necesidades comunes sin convertirse en un editor CAD libre.</p>
+<hr />
+<h1>25. Uniones entre piezas</h1>
+<p>Las uniones permiten indicar cómo se ensamblarán dos piezas.</p>
+<p>Tipos posibles:</p>
+<ul>
+<li>sin especificar;</li>
+<li>tornillos;</li>
+<li>tarugos;</li>
+<li>pocket hole;</li>
+<li>espiga;</li>
+<li>otro.</li>
+</ul>
+<h2>25.1 Crear una unión</h2>
+<p>El flujo visual ideal es:</p>
+<ol>
+<li>Elegir <strong>Unir</strong>.</li>
+<li>Seleccionar una cara de la primera pieza.</li>
+<li>Seleccionar o arrastrar hacia la cara destino.</li>
+<li>Confirmar la unión.</li>
+<li>Elegir el tipo de ensamble.</li>
+</ol>
+<p>Las caras pueden resaltarse durante el proceso.</p>
+<h2>25.2 Propiedades de unión</h2>
+<p>Según el tipo pueden existir datos como:</p>
+<ul>
+<li>cantidad;</li>
+<li>diámetro;</li>
+<li>longitud;</li>
+<li>separación;</li>
+<li>posición;</li>
+<li>notas.</li>
+</ul>
+<h2>25.3 Unión en el 3D</h2>
+<p>La unión puede representarse mediante una marca visual discreta.</p>
+<p>No es necesario modelar cada tornillo o tarugo físicamente.</p>
+<hr />
+<h1>26. Medición y cotas</h1>
+<h2>26.1 Medición</h2>
+<p>La herramienta <strong>Medir</strong> permite obtener una distancia temporal.</p>
+<p>Flujo:</p>
+<ol>
+<li>Activar <strong>Medir</strong>.</li>
+<li>Seleccionar primer punto o cara.</li>
+<li>Seleccionar segundo punto o cara.</li>
+<li>Leer la distancia en mm.</li>
+</ol>
+<p>La medición no modifica el proyecto.</p>
+<h2>26.2 Cotas</h2>
+<p>Al seleccionar una pieza, pueden mostrarse sus dimensiones de forma discreta.</p>
+<p>Ejemplo: <code>1200 × 400 × 18 mm</code></p>
+<p>Las cotas pueden ocultarse para mantener limpia la escena.</p>
+<hr />
+<h1>27. Vista Fabricación</h1>
+<p>La vista <strong>Fabricación</strong> transforma el diseño en información práctica para taller.</p>
+<p>Puede mostrar:</p>
+<ul>
+<li>resumen del proyecto;</li>
+<li>lista de piezas;</li>
+<li>materiales;</li>
+<li>plan actual;</li>
+<li>plan optimizado;</li>
+<li>sobrantes;</li>
+<li>kerf;</li>
+<li>reporte.</li>
+</ul>
+<hr />
+<h1>28. Lista de piezas</h1>
+<p>La lista de piezas puede tener una estructura como:</p>
+<table>
+<thead>
+<tr>
+  <th>ID</th>
+  <th>Material</th>
+  <th>Dimensiones</th>
+  <th>Origen</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A1</td>
+  <td>Pino</td>
+  <td>720 × 100 × 18</td>
+  <td>TABLA-001</td>
+</tr>
+<tr>
+  <td>A2</td>
+  <td>Pino</td>
+  <td>450 × 100 × 18</td>
+  <td>TABLA-001</td>
+</tr>
+<tr>
+  <td>B1</td>
+  <td>MDF</td>
+  <td>800 × 500 × 18</td>
+  <td>HOJA-001</td>
+</tr>
+</tbody>
+</table>
+<p>Los IDs deben coincidir con los mostrados en el diseño.</p>
+<hr />
+<h1>29. Plan de tablas</h1>
+<p>Para cada tabla se muestra cómo se obtuvieron o deben obtenerse las piezas.</p>
+<p>Ejemplo:</p>
+<pre><code class="language-text">TABLA #1 — 3000 mm
+
+| A1 720 | A2 450 | A3 800 | SOBRANTE 1030 |
+</code></pre>
+<p>La representación puede mantener proporciones aproximadas para facilitar su lectura.</p>
+<hr />
+<h1>30. Plan de hojas</h1>
+<p>Para MDF, triplay y materiales similares se muestra una representación 2D.</p>
+<p>Ejemplo:</p>
+<pre><code class="language-text">┌──────────────────────────────┐
+│ A1               │ A2       │
+│ 800 × 500        │ 600×500  │
+├──────────────────┴───────────┤
+│         SOBRANTE             │
+└──────────────────────────────┘
+</code></pre>
+<p>La vista muestra piezas, IDs, dimensiones, líneas de corte y sobrantes.</p>
+<hr />
+<h1>31. Kerf</h1>
+<p>El <strong>kerf</strong> representa el ancho de material perdido por el disco de la sierra.</p>
+<p>Ejemplo: <code>Kerf = 3 mm</code></p>
+<p>Esta pérdida debe considerarse en los cálculos del plan de corte y de optimización.</p>
+<hr />
+<h1>32. Plan actual y plan optimizado</h1>
+<p>Fabricación puede distinguir:</p>
+<h3>Plan actual</h3>
+<p>Representa la forma en que las piezas fueron cortadas o distribuidas durante el diseño.</p>
+<h3>Plan optimizado</h3>
+<p>Es una propuesta automática para reducir número de tablas, número de hojas y desperdicio.</p>
+<p>La optimización no modifica el modelo 3D.</p>
+<hr />
+<h1>33. Optimización de tablas</h1>
+<p>Para tablas y listones se utiliza una optimización 1D basada principalmente en longitud.</p>
+<p>El sistema distribuye piezas dentro de materiales comerciales considerando el kerf.</p>
+<p>El objetivo es reducir el número de materiales utilizados.</p>
+<hr />
+<h1>34. Optimización de hojas</h1>
+<p>Para MDF/triplay se utiliza optimización 2D.</p>
+<p>El sistema intenta distribuir rectángulos dentro de una o varias hojas.</p>
+<p>Puede probar rotaciones de 90° cuando están permitidas.</p>
+<h2>34.1 Rotación</h2>
+<p>Puede existir una opción:</p>
+<p><strong>Permitir rotación de piezas: Sí / No</strong></p>
+<p>Esto ayuda a aprovechar mejor la hoja.</p>
+<p>La dirección de veta puede limitar estas rotaciones cuando esa regla esté configurada.</p>
+<hr />
+<h1>35. Reutilización de sobrantes</h1>
+<p>El optimizador puede considerar sobrantes existentes antes de solicitar material nuevo.</p>
+<p>Debe distinguir:</p>
+<ul>
+<li>material nuevo;</li>
+<li>sobrante reutilizado.</li>
+</ul>
+<p>Un sobrante sólo debe utilizarse cuando realmente puede contener la pieza requerida.</p>
+<hr />
+<h1>36. Plan desactualizado</h1>
+<p>Si después de optimizar se modifica una pieza, una medida, un material o el kerf, el sistema puede marcar el plan como <strong>desactualizado</strong>.</p>
+<p>En ese caso debe ejecutarse nuevamente <strong>Optimizar material</strong> antes de usarlo como referencia definitiva.</p>
+<hr />
+<h1>37. Lista de compra</h1>
+<p>A partir del plan optimizado puede generarse una lista como:</p>
+<pre><code class="language-text">3 × Pino 3000 × 100 × 18 mm
+2 × MDF 2440 × 1220 × 18 mm
+</code></pre>
+<p>Puede diferenciar entre material nuevo y sobrantes reutilizados.</p>
+<hr />
+<h1>38. Orden de cortes</h1>
+<p>Para tablas puede mostrarse un orden práctico.</p>
+<p>Ejemplo:</p>
+<ol>
+<li>Cortar A1 — 720 mm.</li>
+<li>Cortar A3 — 450 mm.</li>
+<li>Cortar A7 — 800 mm.</li>
+<li>Conservar sobrante.</li>
+</ol>
+<p>El kerf debe incluirse en el cálculo correspondiente.</p>
+<hr />
+<h1>39. Reporte de fabricación</h1>
+<p>Desde Fabricación puede generarse un reporte pensado para taller o aserradero.</p>
+<p>El reporte no debe mostrar información interna del software y debe ser comprensible para alguien que no utiliza la aplicación.</p>
+<h2>39.1 Contenido</h2>
+<p>Puede incluir:</p>
+<h3>Proyecto</h3>
+<ul>
+<li>nombre;</li>
+<li>fecha;</li>
+<li>resumen.</li>
+</ul>
+<h3>Lista de compra</h3>
+<p>Material, medidas comerciales y cantidad.</p>
+<h3>Lista de piezas</h3>
+<p>ID, material, dimensiones y cantidad.</p>
+<h3>Plan de tablas</h3>
+<p>Distribución de piezas y sobrantes.</p>
+<h3>Plan de hojas</h3>
+<p>Diagramas 2D con IDs y medidas.</p>
+<h3>Operaciones especiales</h3>
+<ul>
+<li>cortes angulares;</li>
+<li>perforaciones;</li>
+<li>curvas;</li>
+<li>uniones.</li>
+</ul>
+<h2>39.2 Cerrar reporte</h2>
+<p>La vista del reporte debe comportarse como una pantalla convencional:</p>
+<ul>
+<li><strong>X:</strong> cerrar;</li>
+<li><strong>Esc:</strong> cerrar;</li>
+<li>regresar a Fabricación.</li>
+</ul>
+<h2>39.3 Exportar</h2>
+<p>Puede incluir:</p>
+<ul>
+<li><strong>Exportar PDF</strong>;</li>
+<li><strong>Imprimir</strong>.</li>
+</ul>
+<p>El documento utiliza milímetros y evita datos como UUID, JSON o identificadores internos.</p>
+<hr />
+<h1>40. Menú contextual</h1>
+<p>Cuando esté disponible, el clic derecho sobre una pieza puede mostrar acciones frecuentes como:</p>
+<ul>
+<li>duplicar;</li>
+<li>cortar;</li>
+<li>unir;</li>
+<li>ocultar;</li>
+<li>eliminar.</li>
+</ul>
+<p>Esto reduce desplazamientos por la interfaz.</p>
+<hr />
+<h1>41. Buenas prácticas de diseño</h1>
+<h2>41.1 Construir de lo general a lo particular</h2>
+<p>Primero coloca las piezas principales. Después agrega divisiones, cortes, perforaciones y uniones.</p>
+<h2>41.2 Bloquear piezas terminadas</h2>
+<p>Si una pieza ya está correctamente colocada, bloquéala para evitar movimientos accidentales.</p>
+<h2>41.3 Utilizar Snap antes de ajustes manuales</h2>
+<p>Acerca primero la pieza y utiliza Snap. Después realiza ajustes pequeños si son necesarios.</p>
+<h2>41.4 Mantener sobrantes</h2>
+<p>No elimines inmediatamente las piezas sobrantes. Pueden utilizarse posteriormente y mejorar la optimización.</p>
+<h2>41.5 Optimizar al final</h2>
+<p>No es necesario ejecutar optimización después de cada cambio. Primero termina el diseño y luego utiliza <strong>Optimizar material</strong>.</p>
+<hr />
+<h1>42. Ejemplo rápido: crear una mesa</h1>
+<ol>
+<li>Crear un proyecto nuevo.</li>
+<li>Agregar una cubierta o utilizar la plantilla <strong>Mesa</strong>.</li>
+<li>Agregar o revisar las cuatro patas.</li>
+<li>Mover y girar las patas.</li>
+<li>Utilizar Snap cara a cara para colocarlas debajo de la cubierta.</li>
+<li>Revisar dimensiones con cotas o Medir.</li>
+<li>Crear las uniones necesarias.</li>
+<li>Cambiar a <strong>Fabricación</strong>.</li>
+<li>Revisar piezas, materiales y sobrantes.</li>
+<li>Ejecutar <strong>Optimizar material</strong>.</li>
+<li>Generar el reporte para taller.</li>
+<li>Guardar el proyecto.</li>
+</ol>
+<hr />
+<h1>43. Ejemplo rápido: crear una repisa</h1>
+<ol>
+<li>Crear proyecto.</li>
+<li>Agregar dos laterales.</li>
+<li>Agregar repisas horizontales.</li>
+<li>Utilizar Snap para posicionarlas.</li>
+<li>Duplicar una repisa tantas veces como sea necesario.</li>
+<li>Utilizar <strong>Repetir última acción</strong> cuando resulte útil.</li>
+<li>Crear perforaciones o uniones.</li>
+<li>Revisar Fabricación.</li>
+<li>Optimizar material.</li>
+<li>Generar reporte.</li>
+</ol>
+<hr />
+<h1>44. Ejemplo rápido: crear una cajonera</h1>
+<ol>
+<li>Utilizar la plantilla de cajonera si está disponible.</li>
+<li>Definir ancho, alto, fondo y material.</li>
+<li>Ajustar las piezas generadas.</li>
+<li>Revisar separaciones.</li>
+<li>Crear cajones.</li>
+<li>Agregar perforaciones y uniones necesarias.</li>
+<li>Revisar cortes de MDF/triplay.</li>
+<li>Optimizar hojas.</li>
+<li>Generar reporte.</li>
+</ol>
+<hr />
+<h1>45. Solución de problemas</h1>
+<h2>La pieza hace Snap en una posición inesperada</h2>
+<p>Prueba:</p>
+<ol>
+<li>acercar la cara correcta;</li>
+<li>tomar la pieza desde el borde/extremo que deseas unir;</li>
+<li>revisar la previsualización;</li>
+<li>cambiar el tipo de alineación;</li>
+<li>realizar un ajuste fino después del Snap.</li>
+</ol>
+<h2>Perdí el mueble de vista</h2>
+<p>Usa <strong>Ajustar todo</strong> o una vista rápida.</p>
+<h2>Corté una pieza por error</h2>
+<p>Utiliza <strong>Undo</strong>.</p>
+<h2>El plan optimizado no coincide con el proyecto</h2>
+<p>Verifica si aparece como <strong>desactualizado</strong> y vuelve a ejecutar la optimización.</p>
+<h2>No quiero perder un sobrante</h2>
+<p>No lo elimines. Déjalo disponible para que pueda reutilizarse.</p>
+<h2>El reporte no refleja el último cambio</h2>
+<p>Actualiza el plan de fabricación u optimización antes de generar nuevamente el reporte.</p>
+<hr />
+<h1>46. Atajos y acciones rápidas</h1>
+<p>Los atajos exactos pueden depender de la versión.</p>
+<table>
+<thead>
+<tr>
+  <th>Acción</th>
+  <th>Atajo / interacción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Seleccionar</td>
+  <td>Clic</td>
+</tr>
+<tr>
+  <td>Selección múltiple</td>
+  <td>Shift + clic</td>
+</tr>
+<tr>
+  <td>Ajuste fino</td>
+  <td>Flechas</td>
+</tr>
+<tr>
+  <td>Ajuste mayor</td>
+  <td>Shift + flechas</td>
+</tr>
+<tr>
+  <td>Cancelar herramienta</td>
+  <td>Esc</td>
+</tr>
+<tr>
+  <td>Confirmar corte</td>
+  <td>Enter</td>
+</tr>
+<tr>
+  <td>Enfocar pieza</td>
+  <td>Doble clic</td>
+</tr>
+<tr>
+  <td>Menú contextual</td>
+  <td>Clic derecho</td>
+</tr>
+<tr>
+  <td>Undo</td>
+  <td>Ctrl + Z</td>
+</tr>
+<tr>
+  <td>Redo</td>
+  <td>Ctrl + Y / Ctrl + Shift + Z</td>
+</tr>
+<tr>
+  <td>Repetir última acción</td>
+  <td>Según configuración de la versión</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1>47. Conceptos importantes</h1>
+<h2>Material original</h2>
+<p>Tabla u hoja comercial de la que provienen una o más piezas.</p>
+<h2>Pieza</h2>
+<p>Elemento individual utilizado para construir el mueble.</p>
+<h2>Sobrante</h2>
+<p>Parte no utilizada de un material que sigue siendo aprovechable.</p>
+<h2>Source material</h2>
+<p>Referencia interna que vincula una pieza con su material original.</p>
+<h2>Kerf</h2>
+<p>Material perdido por el espesor del disco de corte.</p>
+<h2>Snap</h2>
+<p>Ayuda automática para hacer coincidir caras, bordes o alineaciones.</p>
+<h2>Plan actual</h2>
+<p>Distribución derivada del trabajo realizado durante el diseño.</p>
+<h2>Plan optimizado</h2>
+<p>Propuesta calculada para reducir material y desperdicio.</p>
+<hr />
+<h1>48. Filosofía del sistema</h1>
+<p>El objetivo no es sustituir un CAD profesional ni generar mecanizado CNC completo.</p>
+<p>El sistema busca que una persona pueda:</p>
+<blockquote>
+<p><strong>imaginar un mueble, construirlo visualmente con piezas reales, entender qué material necesita y llevar un plan claro al taller.</strong></p>
+</blockquote>
+<p>Por esa razón la interfaz prioriza:</p>
+<ul>
+<li>simplicidad;</li>
+<li>interacción visual;</li>
+<li>medidas reales;</li>
+<li>pocas ventanas;</li>
+<li>feedback inmediato;</li>
+<li>funciones de carpintería concretas;</li>
+<li>facilidad de fabricación.</li>
+</ul>
+<hr />
+<h1>49. Integrar este manual dentro de la aplicación</h1>
+<p>La recomendación es mantener el archivo Markdown como <strong>fuente principal del manual</strong>.</p>
+<p>Estructura sugerida:</p>
+<pre><code class="language-text">/docs
+  manual-usuario.md
+</code></pre>
+<p>Y mostrarlo desde una opción como:</p>
+<p><strong>Ayuda → Manual de usuario</strong></p>
+<p>Ventajas de Markdown:</p>
+<ul>
+<li>fácil de mantener;</li>
+<li>versionable en Git;</li>
+<li>puede actualizarse junto con el código;</li>
+<li>puede convertirse a HTML/PDF;</li>
+<li>puede mostrarse directamente dentro de React.</li>
+</ul>
+<p>Una estructura posible dentro de la aplicación:</p>
+<pre><code class="language-text">Ayuda
+├── Inicio rápido
+├── Diseño
+├── Piezas y materiales
+├── Snap
+├── Cortes
+├── Perforaciones
+├── Uniones
+├── Fabricación
+├── Optimización
+├── Reportes
+└── Atajos
+</code></pre>
+<p>La versión web puede generarse desde el mismo Markdown para evitar mantener dos manuales diferentes.</p>
+<hr />
+<h1>50. Control de versiones del manual</h1>
+<p>Se recomienda actualizar el manual junto con cada versión del sistema.</p>
+<p>Ejemplo:</p>
+<pre><code class="language-text">v1.0
+- Editor 3D
+- Snap
+- Cortes
+- Fabricación
+- Optimización
+- Reportes
+- Plantillas
+- Guardar/Abrir
+
+v1.1
+- Correcciones UX
+- Nuevas plantillas
+- Mejoras de Snap
+</code></pre>
+<p>Esto permite mantener alineados:</p>
+<p><strong>software + manual + versión entregada al usuario.</strong></p>
+<hr />
+<h1>51. Fin del manual</h1>
+<p>Este documento debe evolucionar junto con el producto.</p>
+<p>Cuando una función cambie, conviene actualizar primero su sección correspondiente en Markdown y regenerar la versión web.</p>
+<footer>Manual de usuario — Diseñador 3D de Muebles. Fuente principal recomendada: Markdown.</footer></main></div>
+<script>
+(function(){
+ const content=document.getElementById('content'), toc=document.getElementById('toc');
+ const headings=[...content.querySelectorAll('h1,h2,h3')], used=new Set();
+ function slug(s){let x=s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); let b=x||'seccion',n=2; while(used.has(x))x=b+'-'+n++; used.add(x); return x;}
+ headings.forEach(h=>{if(!h.id)h.id=slug(h.textContent); if(h.tagName==='H2'){const a=document.createElement('a');a.href='#'+h.id;a.textContent=h.textContent;toc.appendChild(a);}});
+ const search=document.getElementById('search');
+ search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase(); [...content.children].forEach(el=>el.classList.remove('hidden-by-search')); if(!q)return; const sections=[]; let current=null; [...content.children].forEach(el=>{if(el.tagName==='H2'){current={els:[el],text:el.innerText};sections.push(current)}else if(current){current.els.push(el);current.text+=' '+el.innerText}}); sections.forEach(s=>{if(!s.text.toLowerCase().includes(q))s.els.forEach(el=>el.classList.add('hidden-by-search'))});});
+})();
+</script>
+</body></html>
