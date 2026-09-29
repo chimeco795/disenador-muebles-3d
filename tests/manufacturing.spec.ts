@@ -1,0 +1,100 @@
+import { test, expect, type Page } from '@playwright/test';
+test.use({ channel: 'msedge', viewport: { width: 1440, height: 960 } });
+const read = (page: Page) => page.evaluate(() => JSON.parse(localStorage.getItem('taller-project-v1')!));
+const view = (page: Page, name: string) => page.getByRole('group', { name: 'Vista principal', exact: true }).getByRole('button', { name, exact: true }).click();
+async function measure(page: Page, value: number) {
+    await page.locator('.cut-measure').click();
+    await page.getByLabel('Medida de corte').fill(String(value));
+    await page.getByLabel('Medida de corte').press('Enter');
+}
+async function cut(page: Page, value: number, axis?: 'horizontal' | 'vertical') {
+    await page.getByRole('button', { name: '✂ Cortar', exact: true }).click();
+    if (axis) await page.getByRole('button', { name: axis === 'horizontal' ? 'Corte horizontal ↔' : 'Corte vertical ↕', exact: true }).click();
+    await measure(page, value);
+    await page.getByRole('button', { name: '✓ Confirmar corte', exact: true }).click();
+}
+test('tablas y hojas: direcciones, recorte, diagramas, kerf, historial y recarga', async ({ page }) => {
+    test.setTimeout(90000);
+    const errors: string[] = [];
+    page.on('pageerror', e => errors.push(e.message));
+    page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+    await page.goto('http://127.0.0.1:5173');
+    await page.locator('.material-card').first().click();
+    await cut(page, 720);
+    await page.locator('.piece-select').nth(1).click();
+    await cut(page, 450);
+    await view(page, 'Fabricación');
+    await expect(page.locator('canvas')).not.toBeVisible();
+    await expect(page.locator('.stock-plan')).toHaveCount(1);
+    await expect(page.locator('.plan-balance')).toContainText('Utilizado: 1170 mm · Disponible: 1830 mm');
+    await expect(page.locator('.plan-part-list')).toContainText('Sobrante disponible');
+    await expect(page.locator('.plan-part[data-code="A4"] text')).toContainText('450 mm');
+    await page.screenshot({ path: 'tests/manufacturing-board.png' });
+    await page.getByLabel('Ancho de corte de sierra (kerf)', { exact: true }).fill('3');
+    await page.getByLabel('Ancho de corte de sierra (kerf)', { exact: true }).press('Enter');
+    expect((await read(page)).cuts.every((c: any) => c.kerf === 0)).toBe(true);
+    await view(page, 'Diseño');
+    await page.locator('.material-card').nth(3).click();
+    await page.getByLabel('Vista', { exact: true }).selectOption('Superior');
+    await page.waitForTimeout(1400);
+    await page.getByRole('button', { name: '✂ Cortar', exact: true }).click();
+    await page.getByRole('button', { name: 'Corte horizontal ↔', exact: true }).click();
+    // Drag the actual cut plane along the board's width in the top view.
+    // World X/Z projected rulers supply the directions even when the camera is rotated.
+    const zero = (await page.locator('.ruler-label').filter({ hasText: /^0$/ }).boundingBox())!;
+    const xRef = (await page.locator('.ruler-label').filter({ hasText: /^1000$/ }).nth(0).boundingBox())!;
+    const zRef = (await page.locator('.ruler-label').filter({ hasText: /^1000$/ }).nth(1).boundingBox())!;
+    const label = (await page.locator('.cut-measure-label').boundingBox())!;
+    const x = { x: xRef.x + xRef.width / 2 - zero.x - zero.width / 2, y: xRef.y + xRef.height / 2 - zero.y - zero.height / 2 };
+    const z = { x: zRef.x + zRef.width / 2 - zero.x - zero.width / 2, y: zRef.y + zRef.height / 2 - zero.y - zero.height / 2 };
+    const grab = { x: label.x + label.width / 2 + x.x * .5, y: label.y + label.height / 2 + x.y * .5 };
+    const beforeDrag = await read(page);
+    const initialMeasure = await page.locator('.cut-measure').textContent();
+    await page.mouse.move(grab.x, grab.y);
+    await page.mouse.down();
+    await page.mouse.move(grab.x + z.x * .1, grab.y + z.y * .1, { steps: 15 });
+    await page.mouse.up();
+    await expect(page.locator('.cut-measure')).not.toHaveText(initialMeasure!);
+    expect(await read(page)).toEqual(beforeDrag);
+    await measure(page, 500);
+    await expect(page.locator('.cut-measure-label')).toHaveText('2440 × 500 × 18 mm | 2440 × 717 × 18 mm');
+    await page.screenshot({ path: 'tests/manufacturing-horizontal.png' });
+    await page.getByRole('button', { name: '✓ Confirmar corte', exact: true }).click();
+    const horizontal = await read(page);
+    await cut(page, 800, 'vertical');
+    const vertical = await read(page);
+    await page.keyboard.press('Control+z'); expect(await read(page)).toEqual(horizontal);
+    await page.keyboard.press('Control+Shift+z'); expect(await read(page)).toEqual(vertical);
+    await page.locator('.piece-select').nth(4).click();
+    await page.getByRole('button', { name: 'Usar en el mueble', exact: true }).click();
+    await cut(page, 200, 'horizontal');
+    const finished = await read(page);
+    expect(finished.pieces.filter((p: any) => p.sourceMaterialId === 'HOJA-001').map((p: any) => [p.code, p.length, p.width])).toEqual([
+        ['B4', 800, 500], ['B6', 1637, 200], ['B7', 1637, 297], ['B3', 2440, 717],
+    ]);
+    await view(page, 'Fabricación');
+    await page.getByRole('navigation', { name: 'Material original' }).getByRole('button', { name: /Hoja #1/ }).click();
+    await expect(page.locator('.stock-plan')).toHaveCount(1);
+    await expect(page.locator('.stock-diagram')).toHaveAttribute('aria-label', 'Diagrama de HOJA-001');
+    await expect(page.locator('.plan-part')).toHaveCount(4);
+    await expect(page.locator('.plan-cut')).toHaveCount(3);
+    const rects = await page.locator('.plan-part > rect').evaluateAll(nodes => nodes.map(n => ['x', 'y', 'width', 'height'].map(key => Number(n.getAttribute(key)))));
+    expect(rects).toEqual([[0, 0, 800, 500], [803, 0, 1637, 200], [803, 203, 1637, 297], [0, 503, 2440, 717]]);
+    await expect(page.locator('.plan-balance')).toContainText('Sierra: 0.013731 m²');
+    await expect(page.locator('.manufacturing-pieces tbody tr')).toHaveCount(7);
+    await page.screenshot({ path: 'tests/manufacturing-sheet.png' });
+    await page.keyboard.press('Delete');
+    await page.keyboard.press('Control+d');
+    expect(await read(page)).toEqual(finished);
+    await page.getByRole('button', { name: '▣ Guardar', exact: true }).click();
+    await page.reload();
+    await expect(page.locator('.piece-row')).toHaveCount(7);
+    expect(await read(page)).toEqual(finished);
+    await view(page, 'Fabricación');
+    await expect(page.getByLabel('Ancho de corte de sierra (kerf)', { exact: true })).toHaveValue('3');
+    await page.getByRole('navigation', { name: 'Material original' }).getByRole('button', { name: /Hoja #1/ }).click();
+    expect(await page.locator('.plan-part > rect').evaluateAll(nodes => nodes.map(n => ['x', 'y', 'width', 'height'].map(key => Number(n.getAttribute(key)))))).toEqual(rects);
+    await view(page, 'Diseño');
+    await expect(page.locator('canvas')).toBeVisible();
+    expect(errors).toEqual([]);
+});
