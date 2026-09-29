@@ -1,0 +1,4 @@
+import { Line } from '@react-three/drei';
+import { SceneLabel } from './SceneLabel';
+import { SCALE, type Piece } from '../model';
+export function SelectionDimensions({piece:p}:{piece:Piece}){const x=p.length*SCALE/2,y=p.height*SCALE/2,z=p.width*SCALE/2,g=.045;return <group><Line points={[[-x,y,z+g],[x,y,z+g]]} color="#6e8ea5" lineWidth={1} raycast={()=>{}}/><SceneLabel position={[0,y,z+g]} text={'Largo '+p.length+' mm'} className="dimension-tag"/><Line points={[[x+g,y,-z],[x+g,y,z]]} color="#6e8ea5" lineWidth={1} raycast={()=>{}}/><SceneLabel position={[x+g,y,0]} text={'Ancho '+p.width+' mm'} className="dimension-tag"/><Line points={[[-x-g,-y,-z],[-x-g,y,-z]]} color="#6e8ea5" lineWidth={1} raycast={()=>{}}/><SceneLabel position={[-x-g,0,-z]} text={'Espesor '+p.height+' mm'} className="dimension-tag"/></group>;}

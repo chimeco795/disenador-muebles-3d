@@ -1,0 +1,30 @@
+import { Assembly } from './Assembly';
+import { useOperation } from '../operations/store';
+import { describeOperation } from '../operations/geometry';
+import { isSheet } from '../cutting/measure';
+import { useCut } from '../cutting/store';
+import { catalog, dimensions } from '../model';
+import { useEditor, selectionIds } from '../store';
+export { Materials } from './MaterialCatalog';
+export function Properties() {
+    const operating = useOperation(s=>s.pieceId!==null);
+    const cutting = useCut(s => s.pieceId !== null);
+    const s = useEditor(), p = s.project.pieces.find(p => p.id === s.selected);
+    return <div className={cutting || operating ? 'properties-cut-mode' : undefined}>{p ? <><div className="selected-preview"><span style={{ background: p.color }}/></div><p className="eyebrow">{p.materialType} · {p.isLocked ? 'BLOQUEADA' : 'PIEZA SELECCIONADA'}</p><h2>{p.name}</h2><div className="piece-material-state"><strong>{p.code}</strong><small>{p.sourceMaterialId} · {p.usage === 'available' ? 'Sobrante disponible' : p.usage === 'used' ? 'Pieza utilizada' : 'Material original'}</small>{!cutting && <button onClick={() => s.update(p.id, { usage: p.usage === 'used' ? 'available' : 'used' })}>{p.usage === 'used' ? 'Reservar como sobrante' : 'Usar en el mueble'}</button>}</div><p className="measurement">{dimensions(p)}</p><div className="segmented"><button className={s.mode === 'translate' ? 'active' : ''} disabled={p.isLocked || p.isHidden} onClick={() => s.setMode('translate')}>↔ Mover <kbd>G</kbd></button><button className={s.mode === 'rotate' ? 'active' : ''} disabled={p.isLocked || p.isHidden} onClick={() => s.setMode('rotate')}>↻ Rotar <kbd>R</kbd></button></div><p className="muted">{p.isHidden ? 'La pieza está oculta. Muéstrala para manipularla.' : p.isLocked ? 'Desbloquea la pieza para moverla o girarla.' : s.mode === 'translate' ? 'Toma la pieza desde el extremo que quieres unir. También puedes usar las flechas. Alt permite mover libremente.' : 'Los aros X/Y/Z atraen a ángulos recomendados. Sigue arrastrando para salir del ajuste o mantén Alt.'}</p>{cutting && <p className="cut-help">Desliza la línea azul en la pieza. Confirma abajo o pulsa Esc para cancelar.</p>}<div className="actions-grid"><button onClick={s.duplicate}>⧉ Duplicar</button><button onClick={() => s.update(p.id, { isLocked: !p.isLocked })}>{p.isLocked ? '♧ Desbloquear' : '♙ Bloquear'}</button><button onClick={() => s.update(p.id, { isHidden: !p.isHidden })}>{p.isHidden ? '◉ Mostrar' : '◌ Ocultar'}</button><button className="danger" onClick={s.remove}>× Eliminar</button><button className="cut-action" disabled={p.isLocked || p.isHidden || Math.max(p.length, p.width) < 2 + (s.project.sawKerf ?? 0)} onClick={() => useCut.getState().begin()}>✂ Cortar</button><button disabled={p.isLocked||p.isHidden} onClick={()=>useOperation.getState().begin('drill')}>◎ Perforar</button><button disabled={p.isLocked||p.isHidden} onClick={()=>useOperation.getState().begin('curve')}>⌒ Formas curvas</button></div>{!!p.operations?.length&&<section className="piece-operations"><h3>Operaciones de taller</h3>{p.operations.map(op=><div key={op.id}><p>{describeOperation(op)}</p><button disabled={p.isLocked} aria-label="Eliminar operación" onClick={()=>s.removeOperation(p.id,op.id)}>Eliminar operación</button></div>)}<small>Las medidas corresponden a la base rectangular. Para subdividirla, retira antes sus acabados.</small></section>}<label className="selection-dimensions-toggle"><input type="checkbox" checked={s.project.preferences?.dimensions??true} onChange={e=>s.setPreferences({...s.project.preferences??{grid:true,shadows:true,snapAlignment:'free'},dimensions:e.target.checked})}/> Cotas de selección</label><Assembly pieceId={p.id}/><details><summary>Ajuste preciso · mm y grados</summary>{(['position', 'rotation'] as const).map(field => <div key={field}><p className="field-label">{field === 'position' ? 'Posición del centro (mm)' : 'Rotación (°)'}</p><div className="coordinate-fields">{p[field].map((v, i) => <label key={`${p.id}-${field}-${i}-${v}`}>{'XYZ'[i]}<input aria-label={`${field === 'position' ? 'Posición' : 'Rotación'} ${'XYZ'[i]}`} type="number" defaultValue={v} step={field === 'position' ? 1 : 5} disabled={p.isLocked} onBlur={e => {
+                        if (!e.target.value.trim())
+                            return;
+                        const value = Number(e.target.value);
+                        if (!Number.isFinite(value))
+                            return;
+                        const next = [...p[field]] as [
+                            number,
+                            number,
+                            number
+                        ];
+                        next[i] = value;
+                        s.update(p.id, { [field]: next });
+                    }} onKeyDown={e => {
+                        if (e.key === 'Enter')
+                            e.currentTarget.blur();
+                    }}/></label>)}</div></div>)}</details></> : <div className="selection-empty"><div className="outline-cube">◇</div><h2>Una pieza.<br />Muchas posibilidades.</h2><p className="muted">Selecciona una pieza en la escena para moverla, girarla y darle su lugar.</p></div>}<section className="piece-inventory"><h3>En tu proyecto <span>{s.project.pieces.length}</span></h3>{s.project.pieces.length === 0 ? <p className="muted">Aquí encontrarás tus piezas, incluidas las que ocultes.</p> : s.project.pieces.map(piece => <div key={piece.id} className={`piece-row ${selectionIds(s).includes(piece.id) ? 'chosen' : ''}`}><button className="piece-select" onClick={e => s.select(piece.id,e.shiftKey)}><span style={{ background: piece.color }}/><span>{piece.code} · {piece.name}<small>{piece.usage === 'available' ? 'Sobrante · ' : ''}{piece.isLocked ? 'Bloqueada · ' : ''}{piece.isHidden ? 'Oculta' : dimensions(piece)}</small></span></button><button className="icon" title={piece.isHidden ? 'Mostrar pieza' : 'Ocultar pieza'} onClick={() => s.update(piece.id, { isHidden: !piece.isHidden })}>{piece.isHidden ? '◌' : '◉'}</button></div>)}</section></div>;
+}
